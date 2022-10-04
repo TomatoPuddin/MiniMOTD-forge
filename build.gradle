@@ -21,7 +21,7 @@ version = '2.0.2'
 ext["url"] = "https://github.com/TomatoPuddin/MiniMOTD-forge"
 
 java {
-    archivesBaseName = 'minimotd-forge-1.18.x'
+    archivesBaseName = 'minimotd-forge-1.18.x-1.19.x'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
