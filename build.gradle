@@ -17,11 +17,11 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'xyz.jpenilla'
-version = '2.0.2'
+version = '2.0.2fix1'
 ext["url"] = "https://github.com/TomatoPuddin/MiniMOTD-forge"
 
 java {
-    archivesBaseName = 'MiniMOTD-forge-1.12.2'
+    archivesBaseName = 'minimotd-forge-1.12.2'
     toolchain.languageVersion = JavaLanguageVersion.of(8)
 }
 
