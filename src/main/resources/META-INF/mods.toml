@@ -1,0 +1,27 @@
+modLoader = "javafml"
+loaderVersion = "[45,)"
+license = "MIT"
+
+[[mods]]
+modId = "minimotd"
+version = "${file.jarVersion}"
+displayName = "MiniMOTD"
+displayURL="https://github.com/TomatoPuddin/MiniMOTD-forge"
+authors="TomatoPuddin"
+description = '''
+
+'''
+
+[[dependencies.minimotd]]
+modId = "forge"
+mandatory = true
+versionRange = "[45,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.minimotd]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.19.4,)"
+ordering = "NONE"
+side = "BOTH"

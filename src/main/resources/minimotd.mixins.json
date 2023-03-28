@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "xyz.jpenilla.minimotd.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "minimotd.refmap.json",
+  "mixins": [
+    "ConnectionMixin",
+    "ServerHandshakePacketListenerImplMixin",
+    "ServerStatusPacketListenerImplMixin",
+    "ITextComponentSerializerMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
