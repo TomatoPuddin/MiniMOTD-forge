@@ -39,7 +39,7 @@ public class MiniMOTDForge implements MiniMOTDPlatform<byte[]> {
     @SubscribeEvent
     public static void onRegisterCommand(RegisterCommandsEvent event) {
         final CommandHandler<CommandSourceStack> handlerFactory = new CommandHandler(instance.miniMOTD,
-                (CommandHandler.ICommandResponsor<CommandSourceStack>) (source, component) -> source.sendSuccess(TextUtils.toNative(component), true));
+                (CommandHandler.ICommandResponsor<CommandSourceStack>) (source, component) -> source.sendSuccess(() -> TextUtils.toNative(component), true));
         Function<Consumer<CommandSourceStack>, Command<CommandSourceStack>> wrap = r -> ctx -> {
             r.accept(ctx.getSource());
             return 1;
