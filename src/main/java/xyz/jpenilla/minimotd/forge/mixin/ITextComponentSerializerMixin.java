@@ -23,20 +23,21 @@
  */
 package xyz.jpenilla.minimotd.forge.mixin;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ITextComponent.Serializer.class)
 public class ITextComponentSerializerMixin {
-        @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lcom/google/gson/GsonBuilder;create()Lcom/google/gson/Gson;", remap = false),
-                locals = LocalCapture.CAPTURE_FAILEXCEPTION, remap = false)
-        private static void adventure$injectGson(CallbackInfo ci, GsonBuilder gsonbuilder) {
-            GsonComponentSerializer.gson().populator().apply(gsonbuilder);
-        }
+
+    @Redirect(method = "<clinit>",
+            at = @At(value = "INVOKE", target = "Lcom/google/gson/GsonBuilder;create()Lcom/google/gson/Gson;", remap = false))
+    private static Gson adventure$injectGson(GsonBuilder gsonbuilder) {
+        GsonComponentSerializer.gson().populator().apply(gsonbuilder);
+        return gsonbuilder.create();
+    }
 }

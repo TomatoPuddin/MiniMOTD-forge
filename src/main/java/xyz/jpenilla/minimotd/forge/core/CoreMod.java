@@ -1,19 +1,15 @@
 package xyz.jpenilla.minimotd.forge.core;
 
-
-import java.util.Map;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import xyz.jpenilla.minimotd.common.Constants;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
-import org.spongepowered.asm.launch.MixinBootstrap;
-
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-
-@IFMLLoadingPlugin.Name("MiniMOTD")
+@IFMLLoadingPlugin.Name(Constants.PluginMetadata.NAME)
 public class CoreMod implements IFMLLoadingPlugin {
 
     public CoreMod() {
-        MixinBootstrap.init();
     }
 
     @Override

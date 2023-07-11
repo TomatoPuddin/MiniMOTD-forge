@@ -17,7 +17,8 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'xyz.jpenilla'
-version = '2.0.2fix1'
+version = '2.0.2fix2'
+ext["mod_id"] = 'minimotd'
 ext["url"] = "https://github.com/TomatoPuddin/MiniMOTD-forge"
 
 java {
@@ -67,20 +68,27 @@ mixin {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
+
 repositories {
+    maven { url = 'https://maven.cleanroommc.com' }
     mavenCentral()
 }
+
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    shadow 'net.kyori:adventure-api:4.11.0'
-    shadow('net.kyori:adventure-text-serializer-gson:4.11.0'){
+    embed 'net.kyori:adventure-api:4.13.0'
+    embed('net.kyori:adventure-text-serializer-gson:4.13.0'){
         exclude group: 'com.google.code.gson', module: 'gson'
     }
-    shadow 'net.kyori:adventure-text-minimessage:4.11.0'
-    shadow 'org.spongepowered:configurate-hocon:4.1.2'
-    implementation 'org.spongepowered:mixin:0.8.5'
+    embed 'net.kyori:adventure-text-minimessage:4.13.0'
+    embed 'org.spongepowered:configurate-hocon:4.1.2'
+    compileOnly 'zone.rong:mixinbooter:8.3'
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
@@ -90,9 +98,10 @@ blossom {
         replaceToken("\${${token}}", target, "src/main/java/xyz/jpenilla/minimotd/common/Constants.java")
     }
 
-    replaceConstants 'PLUGIN_NAME', rootProject.name
+    replaceConstants 'PLUGIN_NAME', project.name
     replaceConstants 'PLUGIN_VERSION', project.version.toString()
-    replaceConstants 'PLUGIN_WEBSITE', rootProject.ext["url"].toString()
+    replaceConstants 'PLUGIN_WEBSITE', project.ext["url"].toString()
+    replaceConstants 'PLUGIN_ID', project.ext["mod_id"].toString()
 }
 
 jar {
@@ -120,7 +129,10 @@ shadowJar  {
     manifest {
         inheritFrom project.tasks.jar.manifest
     }
-    configurations = [project.configurations.shadow]
+    configurations = [project.configurations.embed]
+    exclude { FileTreeElement el -> el.RelativePath.PathString.startsWith("META-INF/versions/") }
+
+    archiveClassifier = null
     finalizedBy 'reobfShadowJar'
 
     ext.relocateLib = { lib, target ->
@@ -142,4 +154,18 @@ reobf {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+processResources {
+    duplicatesStrategy = 'include'
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
 }

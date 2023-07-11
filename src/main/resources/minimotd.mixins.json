@@ -4,9 +4,7 @@
   "package": "xyz.jpenilla.minimotd.forge.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "minimotd.refmap.json",
-  "mixins": [
-    "ConnectionMixin",
-    "ServerHandshakePacketListenerImplMixin",
+  "server": [
     "ServerStatusPacketListenerImplMixin",
     "ITextComponentSerializerMixin"
   ],

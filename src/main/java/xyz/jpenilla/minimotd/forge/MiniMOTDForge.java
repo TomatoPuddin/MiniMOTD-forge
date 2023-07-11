@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import xyz.jpenilla.minimotd.common.CommandHandler;
+import xyz.jpenilla.minimotd.common.Constants;
 import xyz.jpenilla.minimotd.common.MiniMOTD;
 import xyz.jpenilla.minimotd.common.MiniMOTDPlatform;
 
@@ -21,30 +22,27 @@ import java.nio.file.Paths;
 import java.util.Base64;
 
 @Mod(
-        modid = MiniMOTDForge.MOD_ID,
-        name = MiniMOTDForge.MOD_NAME,
-        version = MiniMOTDForge.VERSION,
+        modid = Constants.PluginMetadata.ID,
+        name = Constants.PluginMetadata.NAME,
+        version = Constants.PluginMetadata.VERSION,
         serverSideOnly = true,
         acceptableRemoteVersions = "*"
 )
 @Mod.EventBusSubscriber
 public class MiniMOTDForge implements MiniMOTDPlatform<String> {
-    public static final String MOD_ID = "minimotd";
-    public static final String MOD_NAME = "MiniMOTD";
-    public static final String VERSION = "1.0";
 
-    @Mod.Instance(MOD_ID)
+    @Mod.Instance(Constants.PluginMetadata.ID)
     public static MiniMOTDForge instance;
 
-    private final Path dataDirectory = Paths.get("config", MOD_ID);
+    private final Path dataDirectory = Paths.get("config", Constants.PluginMetadata.ID);
     private final MiniMOTD<String> miniMOTD = new MiniMOTD<>(this);
 
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Mod.EventHandler
     public static void onRegisterCommand(FMLServerStartingEvent event) {
-        final CommandHandler<ICommandSender> handler = new CommandHandler(instance.miniMOTD,
-                (CommandHandler.ICommandResponsor<ICommandSender>) (source, component) -> source.sendMessage(TextUtils.toNative(component)));
+        final CommandHandler<ICommandSender> handler = new CommandHandler<>(instance.miniMOTD,
+                (source, component) -> source.sendMessage(TextUtils.toNative(component)));
         event.registerServerCommand(new CommandMiniMOTD(handler));
     }
 
@@ -63,7 +61,7 @@ public class MiniMOTDForge implements MiniMOTDPlatform<String> {
 
     @Override
     public Logger logger() {
-        return this.LOGGER;
+        return LOGGER;
     }
 
     @Override

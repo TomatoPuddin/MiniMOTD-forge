@@ -25,55 +25,45 @@ package xyz.jpenilla.minimotd.forge.mixin;
 
 import com.mojang.authlib.GameProfile;
 import net.kyori.adventure.text.Component;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.jpenilla.minimotd.common.ComponentColorDownsampler;
-import xyz.jpenilla.minimotd.common.Constants;
 import xyz.jpenilla.minimotd.common.MOTDIconPair;
+import xyz.jpenilla.minimotd.common.MiniMOTD;
 import xyz.jpenilla.minimotd.common.config.MiniMOTDConfig;
 import xyz.jpenilla.minimotd.common.config.MiniMOTDConfig.PlayerCount;
 import xyz.jpenilla.minimotd.forge.MiniMOTDForge;
 import xyz.jpenilla.minimotd.forge.TextUtils;
-import xyz.jpenilla.minimotd.forge.access.ConnectionAccess;
 
 @Unique
 @Mixin(net.minecraft.server.network.NetHandlerStatusServer .class)
 abstract class ServerStatusPacketListenerImplMixin {
-  // private static final Logger LOGGER = LogManager.getLogger();
-  @Shadow
-  @Final
-  private NetworkManager networkManager;
 
   @Redirect(method = "processServerQuery", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;getServerStatusResponse()Lnet/minecraft/network/ServerStatusResponse;"))
   public ServerStatusResponse injectHandleStatusRequest(final MinecraftServer minecraftServer) {
     final ServerStatusResponse rsp = minecraftServer.getServerStatusResponse();
+
     final MiniMOTDForge miniMOTDForge = MiniMOTDForge.get();
-    final xyz.jpenilla.minimotd.common.MiniMOTD<String> miniMOTD = miniMOTDForge.miniMOTD();
+    final MiniMOTD<String> miniMOTD = miniMOTDForge.miniMOTD();
     final MiniMOTDConfig config = miniMOTD.configManager().mainConfig();
+
     final PlayerCount count = config.modifyPlayerCount(minecraftServer.getCurrentPlayerCount(), rsp.getPlayers().getMaxPlayers());
     final int onlinePlayers = count.onlinePlayers();
     final int maxPlayers = count.maxPlayers();
+
     final MOTDIconPair<String> pair = miniMOTD.createMOTD(config, onlinePlayers, maxPlayers);
 
     final Component motdComponent = pair.motd();
     if (motdComponent != null) {
-      if (((ConnectionAccess) this.networkManager).protocolVersion() >= Constants.MINECRAFT_1_16_PROTOCOL_VERSION) {
-        ITextComponent component = TextUtils.toNative(motdComponent);
-        rsp.setServerDescription(component);
-      } else {
-        ITextComponent component = TextUtils.toNative(
-                ComponentColorDownsampler.downsampler().downsample(motdComponent)
-        );
-        rsp.setServerDescription(component);
-      }
+      ITextComponent component = TextUtils.toNative(
+              ComponentColorDownsampler.downsampler().downsample(motdComponent)
+      );
+      rsp.setServerDescription(component);
     }
 
     final String favicon = pair.icon();
