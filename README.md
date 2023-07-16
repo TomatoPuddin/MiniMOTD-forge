@@ -1,0 +1,1 @@
+### This project is superseded by [MiniMOTD Reforged](https://github.com/TomatoPuddin/MiniMOTD-Reforged).
